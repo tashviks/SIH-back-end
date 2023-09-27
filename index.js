@@ -77,6 +77,7 @@ app.post("/api/auth/register", (req, res)=> {
 app.post("/api/auth/login", (req, res)=> {
     async function search() {
         const {email, password, univ} = req.body;
+        console.log(req.body);
         if (univ) {
             const user = await University.findOne({email: email});
             if (!user)
@@ -85,11 +86,11 @@ app.post("/api/auth/login", (req, res)=> {
             }
             else
             {
-                const hash = password;
+                const hash = user.password;
                 bcrypt.compare(password, hash, function(err, result) {
                     if(result)
                     {
-                        res.json({status: true, user: {email: user.email, password: user.password, username: user.username}});
+                        res.json({status: true, user: {email: user.email, password: user.password, username: user.username, univ: univ}});
                     }
                     else
                     {
