@@ -12,11 +12,12 @@ app.use(cors({
 app.use(express.json());
 const saltRounds = process.env.SALT_ROUNDS;
 
-mongoose.connect(process.env.ATLAS);
+mongoose.connect("mongodb+srv://nhemanthrishee2003:Hrvn_123@cluster0.qndqjcq.mongodb.net/?retryWrites=true&w=majority");
 
 const univSchema = new mongoose.Schema({
     name: String,
-    email: String
+    email: String,
+    password: String
 });
 
 const studSchema = new mongoose.Schema({
@@ -34,7 +35,9 @@ const projSchema = new mongoose.Schema({
     projectTitle: String,
     projectDescription: String,
     selectedTags: Array,
-    images: Array
+    images: Array,
+    projectSource: String,
+    pending: Boolean
 });
 
 const University = mongoose.model("University", univSchema);
@@ -73,26 +76,49 @@ app.post("/api/auth/register", (req, res)=> {
 
 app.post("/api/auth/login", (req, res)=> {
     async function search() {
-        console.log(req.body);
-        // const user = await Student.findOne({email: req.body.email});
-        // if (!user)
-        // {
-        //     res.json({status: false, msg: "Invalid Email, please register or correct the email id"});
-        // }
-        // else
-        // {
-        //     const hash = user.password;
-        //     bcrypt.compare(req.body.password, hash, function(err, result) {
-        //         if(result)
-        //         {
-        //             res.json({status: true, user: {email: user.email, password: user.password, username: user.username}});
-        //         }
-        //         else
-        //         {
-        //             res.json({status: false, msg: "Incorrect Email or Password"});
-        //         }
-        //     });
-        // }
+        const {email, password, univ} = req.body;
+        if (univ) {
+            const user = await University.findOne({email: email});
+            if (!user)
+            {
+                res.json({status: false, msg: "Invalid Email, please enter the correct email id"});
+            }
+            else
+            {
+                const hash = password;
+                bcrypt.compare(password, hash, function(err, result) {
+                    if(result)
+                    {
+                        res.json({status: true, user: {email: user.email, password: user.password, username: user.username}});
+                    }
+                    else
+                    {
+                        res.json({status: false, msg: "Incorrect Email or Password"});
+                    }
+                });
+            }
+        }
+        else {
+            const user = await Student.findOne({email: email});
+            if (!user)
+            {
+                res.json({status: false, msg: "Invalid Email, please enter the correct email id or contact your university"});
+            }
+            else
+            {
+                const hash = password;
+                bcrypt.compare(password, hash, function(err, result) {
+                    if(result)
+                    {
+                        res.json({status: true, user: {email: user.email, password: user.password, username: user.username}});
+                    }
+                    else
+                    {
+                        res.json({status: false, msg: "Incorrect Email or Password"});
+                    }
+                });
+            }
+        }
     }
     search();
 });
