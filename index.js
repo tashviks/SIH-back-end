@@ -76,7 +76,7 @@ app.post("/api/auth/login", (req, res)=> {
         const user = await Student.findOne({email: req.body.email});
         if (!user)
         {
-            res.json({status: false, msg: "Incorrect Email or Password"});
+            res.json({status: false, msg: "Invalid Email, please register or correct the email id"});
         }
         else
         {
