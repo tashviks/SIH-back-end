@@ -117,8 +117,10 @@ app.get("/api/auth/univprojects", async (req, res)=> {
     res.json({"data": univ});
 })
 
-app.get("/api/auth/perprojects", async (req, res)=> {
-
+app.get("/api/auth/perprojects/:email", async (req, res)=> {
+    let email = req.params.email;
+    const projects = await Project.find({userEmail: email});
+    res.json({"projectsList": projects});
 })
 
 app.listen(5000, () => {
