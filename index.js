@@ -73,25 +73,26 @@ app.post("/api/auth/register", (req, res)=> {
 
 app.post("/api/auth/login", (req, res)=> {
     async function search() {
-        const user = await Student.findOne({email: req.body.email});
-        if (!user)
-        {
-            res.json({status: false, msg: "Invalid Email, please register or correct the email id"});
-        }
-        else
-        {
-            const hash = user.password;
-            bcrypt.compare(req.body.password, hash, function(err, result) {
-                if(result)
-                {
-                    res.json({status: true, user: {email: user.email, password: user.password, username: user.username}});
-                }
-                else
-                {
-                    res.json({status: false, msg: "Incorrect Email or Password"});
-                }
-            });
-        }
+        console.log(req.body);
+        // const user = await Student.findOne({email: req.body.email});
+        // if (!user)
+        // {
+        //     res.json({status: false, msg: "Invalid Email, please register or correct the email id"});
+        // }
+        // else
+        // {
+        //     const hash = user.password;
+        //     bcrypt.compare(req.body.password, hash, function(err, result) {
+        //         if(result)
+        //         {
+        //             res.json({status: true, user: {email: user.email, password: user.password, username: user.username}});
+        //         }
+        //         else
+        //         {
+        //             res.json({status: false, msg: "Incorrect Email or Password"});
+        //         }
+        //     });
+        // }
     }
     search();
 });
