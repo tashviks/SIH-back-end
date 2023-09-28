@@ -4,12 +4,15 @@ const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const http = require("http");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
 app.use(cors({
     origin: ["http://localhost:3000"]
 }));
 app.use(express.json());
+app.use(bodyParser.json({ limit: "5gb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "5gb", extended: true }));
 const saltRounds = process.env.SALT_ROUNDS;
 
 mongoose.connect("mongodb+srv://nhemanthrishee2003:Hrvn_123@cluster0.qndqjcq.mongodb.net/?retryWrites=true&w=majority");
@@ -47,9 +50,15 @@ const Project = mongoose.model("Project", projSchema);
 app.post("/api/auth/register", (req, res)=> {
     async function search() {
         const user = await Student.findOne({email: req.body.email});
-        const univ = await University.findOne({email: req.body.email.slice(req.body.email.indexOf('@'))})
+        const univ = await University.find()
+        let uni = false;
+        for (u of univ) {
+            if (u.email.slice(u.email.indexOf("@")) === req.body.email.slice(req.body.email.indexOf("@"))) {
+                uni = true;
+            }
+        }
         let pass = "";
-        if (!user && univ)
+        if (!user && uni)
         {
             bcrypt.hash(req.body.password, Number(saltRounds), async function(err, hash) {
                 pass = hash;
@@ -107,7 +116,7 @@ app.post("/api/auth/login", (req, res)=> {
             }
             else
             {
-                const hash = password;
+                const hash = user.password;
                 bcrypt.compare(password, hash, function(err, result) {
                     if(result)
                     {
